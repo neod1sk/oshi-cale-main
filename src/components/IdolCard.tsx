@@ -37,6 +37,30 @@ function formatRemainingDays(lang: Lang, diffDays: number): string {
   return lang === "ko" ? `${ago}일 전` : `${ago}日前`;
 }
 
+function isValidAvatarImageUrl(raw: string | undefined): boolean {
+  const value = raw?.trim();
+  if (!value) return false;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return false;
+  }
+
+  if (parsed.protocol !== "https:") return false;
+
+  // x.com のプロフィールページURL（/photo など）は画像直リンクではないため非表示にする。
+  if (parsed.hostname === "x.com" || parsed.hostname === "www.x.com") {
+    return false;
+  }
+
+  const path = parsed.pathname.toLowerCase();
+  const hasImageExt = /\.(png|jpe?g|webp|gif|avif|bmp|svg)$/i.test(path);
+  const isTwimgProfile = parsed.hostname.includes("twimg.com") && path.includes("/profile_images/");
+  return hasImageExt || isTwimgProfile;
+}
+
 export type IdolCardProps = {
   lang: Lang;
   idol: IdolWithDiff;
@@ -73,6 +97,8 @@ export function IdolCard({
   const name = getIdolDisplayName(idol as Idol, lang);
 
   const profileXUrl = idol.x_url?.trim();
+  const avatarUrl = idol.x_avatar_url?.trim();
+  const showAvatar = Boolean(profileXUrl) && isValidAvatarImageUrl(avatarUrl);
   const groupFull = idol.group_name?.trim() ?? "";
   const groupTokens = splitGroupAliases(groupFull);
 
@@ -119,6 +145,24 @@ export function IdolCard({
             </span>
           </div>
         </div>
+
+        {showAvatar ? (
+          <a
+            href={profileXUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`${name}のXアカウントを開く`}
+            className="mt-1 shrink-0 rounded-full transition-[transform,box-shadow,opacity] duration-150 ease-out hover:opacity-95 hover:scale-[1.04] hover:shadow-md hover:ring-2 hover:ring-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:shadow-md"
+          >
+            <img
+              src={avatarUrl}
+              alt={`${name}のXプロフィール画像`}
+              loading="lazy"
+              className="size-12 rounded-full object-cover"
+            />
+          </a>
+        ) : null}
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -187,19 +231,6 @@ export function IdolCard({
           ) : null}
 
           <div className="flex items-center gap-2">
-            {profileXUrl ? (
-              <a
-                href={profileXUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${name}のXアカウントを開く`}
-                onClick={(e) => e.stopPropagation()}
-                className="grid size-7 shrink-0 place-items-center rounded-full border border-black/10 bg-white text-[13px] font-black text-zinc-900 shadow-sm transition-[transform,box-shadow,background-color] hover:bg-zinc-50 hover:shadow-md hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/20 drop-shadow-sm"
-              >
-                X
-              </a>
-            ) : null}
-
             {canPost ? (
               <a
                 href={xIntentHref}

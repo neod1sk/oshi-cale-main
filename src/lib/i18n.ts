@@ -37,6 +37,7 @@ type Dict = {
   hero: {
     eyebrow: string;
     todayBirthday: string;
+    todayBirthdayEmpty: string;
     placeholder: string;
     celebrate: string;
     celebrateOnX: string;
@@ -59,8 +60,8 @@ const dict: Record<Lang, Dict> = {
     home: {
       today: "今日の誕生日",
       thisWeek: "今週の誕生日",
-      yesterday: "昨日誕生日だったアイドル",
-      yesterdayEmpty: "昨日誕生日だったアイドルはいません",
+      yesterday: "直近3日以内に誕生日を迎えたアイドル",
+      yesterdayEmpty: "直近3日以内に誕生日だったアイドルはいません",
       next30Days: "直近30日の誕生日",
       next30DaysEmpty: "直近30日以内の誕生日はありません",
       more: "もっと見る",
@@ -78,6 +79,7 @@ const dict: Record<Lang, Dict> = {
     hero: {
       eyebrow: "OSHI CALENDAR",
       todayBirthday: "今日の誕生日",
+      todayBirthdayEmpty: "今日はお誕生日のアイドルはいません",
       placeholder: "仮データ",
       celebrate: "祝う",
       celebrateOnX: "Xでお祝い🎂",
@@ -98,8 +100,8 @@ const dict: Record<Lang, Dict> = {
     home: {
       today: "오늘의 생일",
       thisWeek: "이번 주 생일",
-      yesterday: "어제 생일이었던 아이돌",
-      yesterdayEmpty: "어제 생일이었던 아이돌이 없습니다",
+      yesterday: "최근 3일 이내에 생일이었던 아이돌",
+      yesterdayEmpty: "최근 3일 이내에 생일이었던 아이돌이 없습니다",
       next30Days: "최근 30일 생일",
       next30DaysEmpty: "최근 30일 이내 생일이 없습니다",
       more: "더 보기",
@@ -117,6 +119,7 @@ const dict: Record<Lang, Dict> = {
     hero: {
       eyebrow: "OSHI CALENDAR",
       todayBirthday: "오늘의 생일",
+      todayBirthdayEmpty: "오늘 생일이신 아이돌은 없습니다",
       placeholder: "샘플",
       celebrate: "축하",
       celebrateOnX: "X로 축하🎂",

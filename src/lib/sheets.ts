@@ -9,9 +9,17 @@ export type Idol = {
   group_slug?: string;
   birthday_mmdd: string; // normalized "MM-DD"
   x_url?: string;
+  x_avatar_url?: string;
   source_url?: string;
   status: "active" | string;
 };
+
+// NOTE:
+// - 通常は `.env.local` の `SHEET_CSV_URL` を使います。
+// - ただしセットアップで詰まりやすいので、未設定時は「公開CSV URL」をデフォルトとして使えるようにしています。
+// - 環境変数が設定されている場合は常にそちらが優先されます。
+const DEFAULT_SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2tUQ7VB6fS6m7_rCmDM1nmifENWySGQO0DRrVV1oQwM6-Wo3V1D6KrnbFmFWtY_M-REYQqtda3y1b/pub?gid=0&single=true&output=csv";
 
 export function getIdolDisplayName(idol: Idol, lang: Lang): string {
   const ja = idol.name_ja?.trim();
@@ -102,20 +110,42 @@ function lower(s: string | undefined) {
   return (s ?? "").trim().toLowerCase();
 }
 
+function stripOuterQuotes(s: string) {
+  const t = s.trim();
+  if (
+    (t.startsWith('"') && t.endsWith('"')) ||
+    (t.startsWith("'") && t.endsWith("'"))
+  ) {
+    return t.slice(1, -1).trim();
+  }
+  return t;
+}
+
+function getSheetCsvUrl(): string | null {
+  const raw =
+    process.env.SHEET_CSV_URL ??
+    // 誤って client 用 prefix を付けてしまっても動くようにしておく
+    process.env.NEXT_PUBLIC_SHEET_CSV_URL ??
+    DEFAULT_SHEET_CSV_URL;
+  const url = stripOuterQuotes(String(raw ?? "")).trim();
+  return url ? url : null;
+}
+
 export async function fetchIdols(): Promise<Idol[]> {
-  const url = process.env.SHEET_CSV_URL;
+  const url = getSheetCsvUrl();
   if (!url) {
     throw new Error(
       [
         "SHEET_CSV_URL が未設定です。",
         "プロジェクト直下に `.env.local` を作成し、Google Sheets のCSV公開URLを設定してください。",
         "テンプレ: `env.example`（コピーして `.env.local` を作成）",
+        "（互換: `NEXT_PUBLIC_SHEET_CSV_URL` でも可）",
         "設定後は `npm run dev` を再起動してください。",
       ].join(" ")
     );
   }
 
-  console.log("[sheets] SHEET_CSV_URL:", process.env.SHEET_CSV_URL);
+  console.log("[sheets] CSV URL:", url);
 
   const res = await fetch(url, { next: { revalidate: 600 } });
   console.log("[sheets] CSV fetch status:", res.status);
@@ -140,6 +170,7 @@ export async function fetchIdols(): Promise<Idol[]> {
   const nameJaIdx = idx("name_ja");
   const nameKoIdx = idx("name_ko");
   const legacyNameIdx = idx("name");
+  const xAvatarIdx = idx("x_avatar_url");
 
   if (idIdx === -1 || slugIdx === -1 || statusIdx === -1 || bdayIdx === -1) {
     throw new Error(
@@ -171,6 +202,7 @@ export async function fetchIdols(): Promise<Idol[]> {
       group_name: (idx("group_name") !== -1 ? row[idx("group_name")] : "")?.trim() || undefined,
       group_slug: (idx("group_slug") !== -1 ? row[idx("group_slug")] : "")?.trim() || undefined,
       x_url: (idx("x_url") !== -1 ? row[idx("x_url")] : "")?.trim() || undefined,
+      x_avatar_url: (xAvatarIdx !== -1 ? row[xAvatarIdx] : "")?.trim() || undefined,
       source_url: (idx("source_url") !== -1 ? row[idx("source_url")] : "")?.trim() || undefined,
     };
 

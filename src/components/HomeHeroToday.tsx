@@ -136,7 +136,9 @@ export function HomeHeroToday({
                     {copy.home.error}: {error}
                   </p>
                 ) : todayIdols.length === 0 ? (
-                  <p className="mt-3 text-sm text-zinc-600">{copy.home.empty}</p>
+                  <p className="mt-3 text-sm text-zinc-600">
+                    {copy.hero.todayBirthdayEmpty}
+                  </p>
                 ) : (
                   <ul className="mt-3 space-y-3">
                     {todayIdols.map((idol) => (

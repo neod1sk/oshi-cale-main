@@ -4,11 +4,7 @@ import { notFound } from "next/navigation";
 import { fetchIdols } from "@/lib/sheets";
 import { attachDiffDays, pickToday, sortBySoonest, type IdolWithDiff } from "@/lib/birthday-filters";
 import { t } from "@/lib/i18n";
-import { getTodayJst, startOfDayJst } from "@/lib/birthday";
-
-function pad2(n: number) {
-  return String(n).padStart(2, "0");
-}
+import { daysSinceBirthdayJst } from "@/lib/birthday";
 
 export default async function Home({
   params,
@@ -37,16 +33,15 @@ export default async function Home({
     todayList = pickToday(withDiff);
     next30ListAll = withDiff.filter((x) => x.diffDays <= 30);
 
-    // JST基準で「昨日」が誕生日のアイドル
-    const startToday = startOfDayJst(getTodayJst(now));
-    const yesterdayDate = new Date(startToday.getTime() - 86400000);
-    const y = getTodayJst(yesterdayDate);
-    const yesterdayMmdd = `${pad2(y.month)}-${pad2(y.day)}`;
-
+    // 直近3日（当日=0, 昨日=1, 一昨日=2）に誕生日を迎えたアイドル（JST基準）
+    // 年跨ぎ（12月→1月）や 2/29（非うるう年は 3/1 扱い）も birthday.ts 側の実装で吸収する
     yesterdayList = idols
-      .filter((idol) => idol.birthday_mmdd === yesterdayMmdd)
-      .map((idol) => ({ ...idol, diffDays: -1 }))
+      .map((idol) => ({ idol, since: daysSinceBirthdayJst(idol.birthday_mmdd, now) }))
+      .filter(({ since }) => Number.isFinite(since) && since >= 0 && since <= 2)
+      .map(({ idol, since }) => ({ ...idol, diffDays: -since }))
+      // 新しい順（今日→昨日→一昨日）
       .sort((a, b) => {
+        if (a.diffDays !== b.diffDays) return b.diffDays - a.diffDays;
         const ak = (a.slug ?? a.id ?? "").toString();
         const bk = (b.slug ?? b.id ?? "").toString();
         return ak.localeCompare(bk);
