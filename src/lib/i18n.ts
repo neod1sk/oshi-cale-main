@@ -82,7 +82,7 @@ const dict: Record<Lang, Dict> = {
       todayBirthdayEmpty: "今日はお誕生日のアイドルはいません",
       placeholder: "仮データ",
       celebrate: "祝う",
-      celebrateOnX: "Xでお祝い🎂",
+      celebrateOnX: "Xで祝う🎂",
       celebrateOnXAria: "Xでお祝い（誕生日投稿）",
       tweetTemplate: "今日は{NAME}の誕生日！おめでとう🎂",
     },
