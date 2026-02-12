@@ -1,7 +1,37 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { HeaderNavLink } from "@/components/HeaderNavLink";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { t, type Lang } from "@/lib/i18n";
+
+function LanguageToggleFallback({ lang }: { lang: Lang }) {
+  return (
+    <nav aria-label="Language" className="flex items-center gap-1">
+      <Link
+        href="/ja"
+        className={[
+          "rounded-full px-3 py-1 text-xs font-semibold transition-colors",
+          lang === "ja"
+            ? "bg-zinc-900 text-white"
+            : "text-zinc-700 hover:bg-zinc-900/5",
+        ].join(" ")}
+      >
+        JA
+      </Link>
+      <Link
+        href="/ko"
+        className={[
+          "rounded-full px-3 py-1 text-xs font-semibold transition-colors",
+          lang === "ko"
+            ? "bg-zinc-900 text-white"
+            : "text-zinc-700 hover:bg-zinc-900/5",
+        ].join(" ")}
+      >
+        KO
+      </Link>
+    </nav>
+  );
+}
 
 export function SiteHeader({ lang }: { lang: Lang }) {
   const copy = t(lang);
@@ -22,7 +52,9 @@ export function SiteHeader({ lang }: { lang: Lang }) {
 
         <div className="flex items-center gap-2">
           <HeaderNavLink lang={lang} />
-          <LanguageToggle lang={lang} />
+          <Suspense fallback={<LanguageToggleFallback lang={lang} />}>
+            <LanguageToggle lang={lang} />
+          </Suspense>
         </div>
       </div>
     </header>
