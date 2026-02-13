@@ -243,15 +243,7 @@ export function IdolCard({
                 >
                   {copy.hero.celebrateOnX}
                 </a>
-              ) : (
-                <span
-                  aria-disabled="true"
-                  aria-label={copy.hero.celebrateOnXAria}
-                  className="cursor-not-allowed whitespace-nowrap rounded-full bg-zinc-900/35 px-2.5 py-1.5 text-[11px] font-semibold text-white/80 shadow-sm sm:px-3 sm:py-2 sm:text-xs"
-                >
-                  {copy.hero.celebrateOnX}
-                </span>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
