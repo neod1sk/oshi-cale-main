@@ -501,7 +501,7 @@ export function BirthdayTimeline({
                 }
               }}
               placeholder={searchPlaceholder}
-              className="w-full rounded-full border border-black/10 bg-white/80 px-3 py-1.5 pr-16 text-xs text-zinc-800 shadow-sm outline-none transition-[background-color,box-shadow] placeholder:text-zinc-400 focus:bg-white focus:ring-2 focus:ring-zinc-900/10"
+              className="ios-no-zoom-input w-full rounded-full border border-black/10 bg-white/80 px-3 py-1.5 pr-16 text-xs text-zinc-800 shadow-sm outline-none transition-[background-color,box-shadow] placeholder:text-zinc-400 focus:bg-white focus:ring-2 focus:ring-zinc-900/10"
             />
             {(query || selectedFilter) && selectedFilter?.type !== "group" && (
               <button
