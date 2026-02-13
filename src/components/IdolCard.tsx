@@ -115,7 +115,12 @@ export function IdolCard({
   const badgeClass =
     size === "calendar"
       ? "grid h-20 w-20 place-items-center rounded-2xl border border-black/10 bg-zinc-900/5 px-3 py-2 text-zinc-700 self-start"
-      : "grid min-h-14 min-w-16 place-items-center rounded-2xl border border-black/10 bg-zinc-900/5 px-2.5 py-1.5 text-zinc-700";
+      : "grid min-h-14 w-full place-items-center rounded-2xl border border-black/10 bg-zinc-900/5 px-2.5 py-1.5 text-zinc-700";
+
+  const leftColClass =
+    size === "calendar"
+      ? "flex w-20 shrink-0 flex-col items-center"
+      : "flex w-16 shrink-0 flex-col items-center";
 
   const containerClass =
     size === "calendar"
@@ -125,24 +130,49 @@ export function IdolCard({
   return (
     <li className={containerClass}>
       <div className="flex items-start gap-3 sm:gap-4">
-        <div className={badgeClass}>
-          <div className="grid place-items-center gap-0.5">
-            <span
-              className={[
-                "font-bold tabular-nums",
-                size === "calendar" ? "text-base" : "text-sm",
-              ].join(" ")}
-            >
-              {mmddToLabel(idol.birthday_mmdd)}
-            </span>
-            <span
-              className={[
-                "font-semibold text-zinc-600",
-                size === "calendar" ? "text-sm" : "text-xs",
-              ].join(" ")}
-            >
-              {diffLabel}
-            </span>
+        <div className={leftColClass}>
+          <div className={badgeClass}>
+            <div className="grid place-items-center gap-0.5">
+              <span
+                className={[
+                  "font-bold tabular-nums",
+                  size === "calendar" ? "text-base" : "text-sm",
+                ].join(" ")}
+              >
+                {mmddToLabel(idol.birthday_mmdd)}
+              </span>
+              <span
+                className={[
+                  "font-semibold text-zinc-600",
+                  size === "calendar" ? "text-sm" : "text-xs",
+                ].join(" ")}
+              >
+                {diffLabel}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-2 flex w-full items-center justify-center">
+            {canPost ? (
+              <a
+                href={xIntentHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={copy.hero.celebrateOnXAria}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex w-full justify-center whitespace-nowrap rounded-full bg-zinc-900 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-sm transition-colors hover:bg-zinc-800 sm:px-3 sm:py-2 sm:text-xs"
+              >
+                {copy.hero.celebrateOnX}
+              </a>
+            ) : (
+              <span
+                aria-disabled="true"
+                aria-label={copy.hero.celebrateOnXAria}
+                className="inline-flex w-full cursor-not-allowed justify-center whitespace-nowrap rounded-full bg-zinc-900/35 px-2.5 py-1.5 text-[11px] font-semibold text-white/80 shadow-sm sm:px-3 sm:py-2 sm:text-xs"
+              >
+                {copy.hero.celebrateOnX}
+              </span>
+            )}
           </div>
         </div>
 
@@ -231,20 +261,7 @@ export function IdolCard({
               </button>
             ) : null}
 
-            <div className="flex items-center gap-2">
-              {canPost ? (
-                <a
-                  href={xIntentHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={copy.hero.celebrateOnXAria}
-                  onClick={(e) => e.stopPropagation()}
-                  className="whitespace-nowrap rounded-full bg-zinc-900 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-sm transition-colors hover:bg-zinc-800 sm:px-3 sm:py-2 sm:text-xs"
-                >
-                  {copy.hero.celebrateOnX}
-                </a>
-              ) : null}
-            </div>
+            {/* X button moved under the date pill (left column) */}
           </div>
         </div>
       </div>
