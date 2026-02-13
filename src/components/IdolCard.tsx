@@ -124,7 +124,7 @@ export function IdolCard({
 
   return (
     <li className={containerClass}>
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3 sm:gap-4">
         <div className={badgeClass}>
           <div className="grid place-items-center gap-0.5">
             <span
@@ -164,93 +164,95 @@ export function IdolCard({
           </a>
         ) : null}
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <p className="min-w-0 flex-1 truncate text-[17px] font-semibold text-zinc-950">
-              {name}
-            </p>
+        <div className="min-w-0 flex flex-1 items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <p className="min-w-0 flex-1 truncate text-[17px] font-semibold text-zinc-950">
+                {name}
+              </p>
+            </div>
+
+            {groupTokens.length === 0 ? (
+              <p className="mt-0.5 truncate text-sm text-zinc-600">
+                {groupFull || "—"}
+              </p>
+            ) : (
+              <div className="mt-0.5 flex flex-wrap items-center gap-1 text-sm text-zinc-600">
+                {groupTokens.map((token, idx) => {
+                  const isActive =
+                    activeGroupToken &&
+                    normalizeForToken(token) === normalizeForToken(activeGroupToken);
+                  return (
+                    <span key={`${token}-${idx}`} className="inline-flex min-w-0 items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectGroupToken?.(token);
+                        }}
+                        aria-label={`${token}で絞り込み`}
+                        className={[
+                          "truncate rounded-md px-1 py-0.5 text-sm transition-colors",
+                          "hover:bg-zinc-900/5 hover:text-zinc-900",
+                          isActive ? "bg-zinc-900/5 text-zinc-900" : "",
+                        ].join(" ")}
+                      >
+                        {token}
+                      </button>
+                      {idx < groupTokens.length - 1 ? (
+                        <span className="text-zinc-400">／</span>
+                      ) : null}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          {groupTokens.length === 0 ? (
-            <p className="mt-0.5 truncate text-sm text-zinc-600">
-              {groupFull || "—"}
-            </p>
-          ) : (
-            <div className="mt-0.5 flex flex-wrap items-center gap-1 text-sm text-zinc-600">
-              {groupTokens.map((token, idx) => {
-                const isActive =
-                  activeGroupToken &&
-                  normalizeForToken(token) === normalizeForToken(activeGroupToken);
-                return (
-                  <span key={`${token}-${idx}`} className="inline-flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelectGroupToken?.(token);
-                      }}
-                      aria-label={`${token}で絞り込み`}
-                      className={[
-                        "truncate rounded-md px-1 py-0.5 text-sm transition-colors",
-                        "hover:bg-zinc-900/5 hover:text-zinc-900",
-                        isActive ? "bg-zinc-900/5 text-zinc-900" : "",
-                      ].join(" ")}
-                    >
-                      {token}
-                    </button>
-                    {idx < groupTokens.length - 1 ? (
-                      <span className="text-zinc-400">／</span>
-                    ) : null}
-                  </span>
-                );
-              })}
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            {extraRightActions}
+
+            {favorite ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  favorite.onToggle();
+                }}
+                className={[
+                  "grid size-9 place-items-center rounded-2xl border text-sm font-semibold transition-[background-color,transform,box-shadow,color] hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 active:scale-[0.98]",
+                  favorite.isFavorite
+                    ? "border-zinc-900 bg-zinc-900 text-amber-400"
+                    : "border-black/10 bg-white/70 text-zinc-700 hover:bg-white",
+                ].join(" ")}
+                aria-label={favorite.isFavorite ? "unfavorite" : "favorite"}
+              >
+                {favorite.isFavorite ? "★" : "☆"}
+              </button>
+            ) : null}
+
+            <div className="flex items-center gap-2">
+              {canPost ? (
+                <a
+                  href={xIntentHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={copy.hero.celebrateOnXAria}
+                  onClick={(e) => e.stopPropagation()}
+                  className="whitespace-nowrap rounded-full bg-zinc-900 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-sm transition-colors hover:bg-zinc-800 sm:px-3 sm:py-2 sm:text-xs"
+                >
+                  {copy.hero.celebrateOnX}
+                </a>
+              ) : (
+                <span
+                  aria-disabled="true"
+                  aria-label={copy.hero.celebrateOnXAria}
+                  className="cursor-not-allowed whitespace-nowrap rounded-full bg-zinc-900/35 px-2.5 py-1.5 text-[11px] font-semibold text-white/80 shadow-sm sm:px-3 sm:py-2 sm:text-xs"
+                >
+                  {copy.hero.celebrateOnX}
+                </span>
+              )}
             </div>
-          )}
-        </div>
-
-        <div className="flex shrink-0 flex-col items-end gap-2">
-          {extraRightActions}
-
-          {favorite ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                favorite.onToggle();
-              }}
-              className={[
-                "grid size-9 place-items-center rounded-2xl border text-sm font-semibold transition-[background-color,transform,box-shadow,color] hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 active:scale-[0.98]",
-                favorite.isFavorite
-                  ? "border-zinc-900 bg-zinc-900 text-amber-400"
-                  : "border-black/10 bg-white/70 text-zinc-700 hover:bg-white",
-              ].join(" ")}
-              aria-label={favorite.isFavorite ? "unfavorite" : "favorite"}
-            >
-              {favorite.isFavorite ? "★" : "☆"}
-            </button>
-          ) : null}
-
-          <div className="flex items-center gap-2">
-            {canPost ? (
-              <a
-                href={xIntentHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={copy.hero.celebrateOnXAria}
-                onClick={(e) => e.stopPropagation()}
-                className="whitespace-nowrap rounded-full bg-zinc-900 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-zinc-800"
-              >
-                {copy.hero.celebrateOnX}
-              </a>
-            ) : (
-              <span
-                aria-disabled="true"
-                aria-label={copy.hero.celebrateOnXAria}
-                className="cursor-not-allowed whitespace-nowrap rounded-full bg-zinc-900/35 px-3 py-2 text-xs font-semibold text-white/80 shadow-sm"
-              >
-                {copy.hero.celebrateOnX}
-              </span>
-            )}
           </div>
         </div>
       </div>
