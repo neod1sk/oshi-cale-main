@@ -16,7 +16,7 @@ function LanguageToggleFallback({ lang }: { lang: Lang }) {
             : "text-zinc-700 hover:bg-zinc-900/5",
         ].join(" ")}
       >
-        JA
+        JP
       </Link>
       <Link
         href="/ko"
@@ -27,7 +27,7 @@ function LanguageToggleFallback({ lang }: { lang: Lang }) {
             : "text-zinc-700 hover:bg-zinc-900/5",
         ].join(" ")}
       >
-        KO
+        KR
       </Link>
     </nav>
   );
